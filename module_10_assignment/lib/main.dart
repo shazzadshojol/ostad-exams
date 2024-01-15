@@ -34,20 +34,67 @@ class _CartPageState extends State<CartPage> {
   var priceColor = TextStyle(color: Colors.black, fontWeight: FontWeight.bold);
   List<ShoppingCartProduct> cartProducts = [];
 
-  void addToCart(ShoppingCartProduct product) {
-    setState(() {
-      cartProducts.add(product);
-      calculateTotalPrice(); // Call the method to calculate total price
-    });
-  }
-
   void calculateTotalPrice() {
     setState(() {
       totalPrice = 0;
       for (var product in cartProducts) {
-        totalPrice += product.price * product.quantity;
+        totalPrice += product.price;
       }
     });
+  }
+
+  void addToCart(ShoppingCartProduct product) {
+    setState(() {
+      cartProducts.add(product);
+    });
+
+    calculateTotalPrice(); // Move this outside setState
+
+    // Check if the user has selected 5 products
+    if (cartProducts.length == 5) {
+      String uniqueTitle = cartProducts[0]
+          .title; // Assuming the titles are the same, change this logic if needed
+      showAlertDialog(uniqueTitle);
+    }
+  }
+  // void addToCart(ShoppingCartProduct product) {
+  //   setState(() {
+  //     cartProducts.add(product);
+  //     uniqueProductTitles.add(product.title);
+  //   });
+
+  //   calculateTotalPrice(); // Move this outside setState
+
+  //   // Check if the user has selected 5 products
+  //   if (uniqueProductTitles.length == 5) {
+  //     showAlertDialog(
+  //         'You have selected 5 products with the title: ${product.title}');
+  //   }
+  // }
+
+  Set<String> uniqueProductTitles = Set<String>();
+
+  Future<void> showAlertDialog(String productTitle) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: AlertDialog(
+            title: Text('Congratulations!'),
+            content:
+                Text('You have selected\n 5 \n$productTitle(s) in your bag.'),
+            actions: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -115,7 +162,7 @@ class _CartPageState extends State<CartPage> {
                           style: amountColor,
                         ),
                         Text(
-                          totalPrice.toString(),
+                          '\$${totalPrice.toString()}',
                           style: priceColor,
                         )
                       ],

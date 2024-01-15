@@ -41,8 +41,6 @@ class ShoppingCartProduct {
   });
 }
 
-int price = 0;
-
 class _ProductsState extends State<Products> {
   int quantity = 1;
   String titleText = '';
@@ -61,7 +59,7 @@ class _ProductsState extends State<Products> {
 
   void updatePrices() {
     setState(() {
-      unitPrice = widget.priceAmount;
+      var priceAmount = widget.priceAmount;
     });
   }
 
@@ -139,6 +137,15 @@ class _ProductsState extends State<Products> {
                                 setState(() {
                                   quantity--;
                                   updatePrices();
+                                  widget.addToCartCallback(ShoppingCartProduct(
+                                    title: widget.titleText,
+                                    quantity: quantity,
+                                    price: widget.priceAmount.toDouble(),
+                                    size: widget.sizeName,
+                                    productImage: widget.productImage,
+                                    color: widget.colorName,
+                                  ));
+                                  ;
                                 });
                               }
                             },
@@ -173,6 +180,15 @@ class _ProductsState extends State<Products> {
                               setState(() {
                                 quantity++;
                                 updatePrices();
+                                widget.addToCartCallback(ShoppingCartProduct(
+                                  title: widget.titleText,
+                                  quantity: quantity,
+                                  price: widget.priceAmount.toDouble(),
+                                  size: widget.sizeName,
+                                  productImage: widget.productImage,
+                                  color: widget.colorName,
+                                ));
+                                ;
                               });
                             },
                             child: Container(
@@ -205,7 +221,7 @@ class _ProductsState extends State<Products> {
                         '\$${calculateUnitTotalPrice()}'.toString(),
                         style: priceColor,
                       ),
-                    )
+                    ),
                   ],
                 )
               ],
