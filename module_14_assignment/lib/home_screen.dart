@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: ListView.builder(
         itemBuilder: (context, index) => Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: ListTile(
             leading: Image.network(imagesToShow[index].thumbnailUrl ?? 'Error'),
             title: Text(imagesToShow[index].title ?? 'Text not found'),
@@ -42,24 +42,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getImagesFromApi() async {
-    Uri uri = Uri.parse('https://jsonplaceholder.typicode.com/photos');
-    Response response = await get(uri);
-    print(response);
-    print(response.body);
+    try {
+      Uri uri = Uri.parse('https://jsonplaceholder.typicode.com/photos');
+      Response response = await get(uri);
 
-    if (response.statusCode == 200) {
-      var decodedResponse = jsonDecode(response.body);
-      for (var item in decodedResponse) {
-        ImagesFromAPI imagesApi = ImagesFromAPI(
-          albumId: item['albumId'],
-          id: item['id'],
-          title: item['title'],
-          url: item['url'],
-          thumbnailUrl: item['thumbnailUrl'],
-        );
-        imagesToShow.add(imagesApi);
+      if (response.statusCode == 200) {
+        var decodedResponse = jsonDecode(response.body);
+        for (var item in decodedResponse) {
+          ImagesFromAPI imagesApi = ImagesFromAPI(
+            albumId: item['albumId'],
+            id: item['id'],
+            title: item['title'],
+            url: item['url'],
+            thumbnailUrl: item['thumbnailUrl'],
+          );
+          imagesToShow.add(imagesApi);
+        }
+        setState(() {});
+      } else {
+        print('Failed to load data. Status code: ${response.statusCode}');
       }
-      setState(() {});
+    } catch (e) {
+      print('Error $e');
     }
   }
 
